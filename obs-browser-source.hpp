@@ -25,6 +25,7 @@
 
 #include <functional>
 #include <string>
+#include <ctime>
 
 #if EXPERIMENTAL_SHARED_TEXTURE_SUPPORT_ENABLED
 extern bool hwaccel;
@@ -49,6 +50,7 @@ struct BrowserSource {
 	bool                  restart                  = false;
 	bool                  shutdown_on_invisible    = false;
 	bool                  is_local                 = false;
+	int                   refresh_time             = 0;
 #if EXPERIMENTAL_SHARED_TEXTURE_SUPPORT_ENABLED
 	bool                  reset_frame              = false;
 #endif
@@ -100,4 +102,6 @@ struct BrowserSource {
 #if EXPERIMENTAL_SHARED_TEXTURE_SUPPORT_ENABLED
 	inline void SignalBeginFrame();
 #endif
+private:
+	time_t last_refresh = 0;
 };

@@ -283,6 +283,7 @@ void BrowserSource::SetShowing(bool showing)
 			cefBrowser->GetHost()->WasHidden(false);
 			cefBrowser->GetHost()->Invalidate(PET_VIEW);
 		}, true);
+		last_refresh = time(nullptr);
 	}
 }
 
@@ -303,7 +304,7 @@ void BrowserSource::Refresh()
 	ExecuteOnBrowser([this] ()
 	{
 		cefBrowser->ReloadIgnoreCache();
-	}, true);
+	}, true);	
 }
 
 #if EXPERIMENTAL_SHARED_TEXTURE_SUPPORT_ENABLED
@@ -329,6 +330,7 @@ void BrowserSource::Update(obs_data_t *settings)
 		int n_fps;
 		bool n_shutdown;
 		bool n_restart;
+		int n_refreshTime;
 		std::string n_url;
 		std::string n_css;
 
@@ -341,6 +343,7 @@ void BrowserSource::Update(obs_data_t *settings)
 		n_css       = obs_data_get_string(settings, "css");
 		n_url       = obs_data_get_string(settings,
 				n_is_local ? "local_file" : "url");
+		n_refreshTime = (int)obs_data_get_int(settings, "refresh_time");
 
 		if (n_is_local)
 			n_url = "http://absolute/" + n_url;
@@ -364,6 +367,7 @@ void BrowserSource::Update(obs_data_t *settings)
 		restart               = n_restart;
 		css                   = n_css;
 		url                   = n_url;
+		refresh_time          = n_refreshTime;
 	}
 
 	DestroyBrowser(true);
@@ -379,6 +383,11 @@ void BrowserSource::Tick()
 #if EXPERIMENTAL_SHARED_TEXTURE_SUPPORT_ENABLED
 	reset_frame = true;
 #endif
+	if (cefBrowser != nullptr && time(nullptr) - last_refresh >= refresh_time)
+	{
+		cefBrowser->Reload();
+		last_refresh = time(nullptr);
+	}
 }
 
 void BrowserSource::Render()
