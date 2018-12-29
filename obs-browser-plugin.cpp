@@ -93,7 +93,7 @@ static void browser_source_get_defaults(obs_data_t *settings)
 	obs_data_set_default_bool(settings, "shutdown", false);
 	obs_data_set_default_bool(settings, "restart_when_active", false);
 	obs_data_set_default_string(settings, "css", default_css);
-	obs_data_set_default_int(settings, "refresh_time", 120);
+	obs_data_set_default_int(settings, "refresh_time", 0);
 }
 
 static bool is_local_file_modified(obs_properties_t *props,
@@ -148,7 +148,7 @@ static obs_properties_t *browser_source_get_properties(void *data)
 	obs_properties_add_bool(props, "restart_when_active",
 			obs_module_text("RefreshBrowserActive"));
 	obs_properties_add_int(props, "refresh_time",
-			obs_module_text("Refresh time (in s)"), 0, 99999999, 1);
+			obs_module_text("Refresh time (in s)"), 0, 999, 1);
 
 	obs_properties_add_button(props, "refreshnocache",
 			obs_module_text("RefreshNoCache"),
